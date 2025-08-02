@@ -1,0 +1,666 @@
+# to import tkinter 
+import tkinter as tk
+#to import messagebox from tkinter
+from tkinter import messagebox
+#random module generator
+import random
+
+#main game interface
+class MainMenu:
+    def __init__(display, root):                   #initialization method
+        display.root = root
+        #title bar of game
+        display.root.title("Stellar")
+        #calls create main menu for main game page
+        display.main_menu()
+
+    def main_menu(display):
+        display.clear_screen()
+        #sets background image 
+        ############ the image needs to be saved in one's laptop and the address needs to be copy pasted below in order for the window to open.########
+        ########################## if it doesn't work any image of choice can be used; the path of the image needs to be pasted. ####################
+        display.set_background_image(r"C:\Users\Wajahat Traders\Downloads\Untitled design (4).png")  
+
+        #main title
+        title = tk.Label(display.canvas, text="Welcome to Stellar".upper(), font=("Helvetica", 50), fg= "White", bg = "#4B0082")
+        display.canvas.create_window(650, 60, window=title)  # Center the title
+        #quiz game button and calls start_quiz 
+        quiz_button = tk.Button(display.canvas, text="Pop quiz".upper(), command=display.start_quiz,font=("Helvetica", 20), fg= "White", bg = "#8F00FF")
+        display.canvas.create_window(650, 150, window=quiz_button)
+        #rock paper scissors and calls start_rps
+        rps_button = tk.Button(display.canvas, text="RPS Royale".upper(), command=display.start_rps, font=("Helvetica", 20), fg= "White", bg = "#8F00FF")
+        display.canvas.create_window(650, 230, window=rps_button)
+        #math blitz and calls start math_blitz
+        math_button = tk.Button(display.canvas, text="Math Blitz".upper(), command=display.start_math_game, font=("Helvetica", 20), fg= "White", bg = "#8F00FF")
+        display.canvas.create_window(650, 300, window=math_button)
+        #guess the color and calls start_color_guess_game
+        color_guess_button = tk.Button(display.canvas, text="Palette Puzzle".upper(), command=display.start_color_guess_game, font=("Helvetica", 20), fg= "White", bg = "#8F00FF")
+        display.canvas.create_window(650, 370, window=color_guess_button)
+        #guess the song and call start guess the song game
+        guess_song_button = tk.Button(display.canvas, text="Melody Mysteries".upper(), command=display.start_guess_the_song_game, font=("Helvetica", 20), fg= "White", bg = "#8F00FF")
+        display.canvas.create_window(650, 440, window=guess_song_button)
+        #guess the number and calls start guess the number
+        guess_number_button = tk.Button(display.canvas, text="Cosmic Code".upper(), command=display.start_guess_the_number_game, font=("Helvetica", 20), fg= "White", bg = "#8F00FF")
+        display.canvas.create_window(650, 510, window=guess_number_button)
+        #exit button 
+        exit_button = tk.Button(display.canvas, text="Exit".upper(), command=display.root.quit, font=("Helvetica", 20), fg= "White", bg = "#8F00FF")
+        display.canvas.create_window(50, 450, window=exit_button)
+
+    #calls quiz game
+    def start_quiz(display):
+        display.clear_screen()
+        PopQuiz(display.root, display.main_menu)
+
+    #calls rps game
+    def start_rps(display):
+        display.clear_screen()
+        RPSRoyale(display.root, display.main_menu)
+
+    #calls math game
+    def start_math_game(display):
+        display.clear_screen()
+        MathBlitz(display.root, display.main_menu)
+
+    #calls color game
+    def start_color_guess_game(display):
+        display.clear_screen()
+        PalettePuzzle(display.root, display.main_menu)
+
+    #calls guess the song game
+    def start_guess_the_song_game(display):
+        display.clear_screen()
+        MelodyMysteries(display.root, display.main_menu)
+
+    #calls guess the number game
+    def start_guess_the_number_game(display):
+        display.clear_screen()
+        CosmicCode(display.root, display.main_menu)
+
+    #sets background image
+    def set_background_image(display, image_path):
+        # Load and display the background image
+        display.bg_image = tk.PhotoImage(file=r"C:\Users\Wajahat Traders\Downloads\Untitled design (4).png")
+        display.canvas = tk.Canvas(display.root, width=800, height=600)
+        display.canvas.pack(fill="both", expand=True)
+
+
+        display.canvas.create_image(0, 0, image=display.bg_image, anchor="nw")
+    #clears screen
+    def clear_screen(display):
+        for widget in display.root.winfo_children():
+            widget.destroy()
+
+#guess the song game
+class MelodyMysteries:
+    
+    def __init__(display, root, main_menu_callback):
+        display.root = root
+        display.main_menu_callback = main_menu_callback
+        #questions of guuess the song game
+        display.questions = {1: "The old Taylor can’t come to the phone right now\n Why? Oh, 'cause she's dead!", 
+        2: "Your faithless love's the only hoax I believe in", 3: "It's you and me\n that's my whole world...",
+        4: "I had a marvelous time ruining everything",
+        5: "You drew stars around my scars but now I’m bleeding",
+        6: "I could build a castle out of all the bricks they threw at me",
+        7: "So make the friendship bracelets...",
+        8: "I think I've seen this film before...",
+        9: "It takes everything in me just to get up each day...",
+        10: "Just between us, did the love affair maim you too?", 11: "We used to be close but people can go \n From people you know to people you don't\n",
+        12: "Going back to the corner where I first saw you\n Gonna camp in my sleeping bag, I'm not gonna move\n Got some words on cardboard, got your picture in my hand\n Saying, If you see this girl can you tell her where I am?",
+        13: "You could be the greatest\n You could be the best\n You could be the king-kong\n Banging on his chest\n",
+        14: "Look who we are\n We are the dreamers \n We make it happen\n Cause we believe it\n",
+        15: "All we ever hear from you is blah, blah, blah\n So, all we ever do is go ya, ya, ya\n And we don't even care about what they say\n 'Cause it's ya-ya, ya-ya\n",
+        16: "I'm on my way\n Driving at 90 down those country lanes\n Singing to Tiny Dancer\n And I miss the way you make me feel",
+        17: "She played the fiddle in an Irish band\n But she fell in love with an English man\n Kissed her on the neck and then I took her by the hand\nSaid, Baby, I just want to dance",
+        18:"And they say\n She's in the Class A Team\n Stuck in her daydream \n Seen this way since eighteen\n",
+        19:"So you can keep me\n Inside the pocket\n Of your ripped jeans\n Holding me closer\n'Til our eyes meet\n You won't ever be alone\n Wait for me to come home",
+        20: "So, honey, now\n Take me into your loving arms\n Kiss me under the light of a thousand stars\n Place your head on my beating heart",
+        21:"So open your eyes and see\n The way our horizons meet\n And all of the lights will lead\n Into the night with me\n"}
+
+        #answer key of songs guess
+        display.answers = { 1: "look what you made me do", 2: "hoax", 3: "miss americana and the heartbreak prince",
+        4: "the last great american dynasty",
+        5: "cardigan",
+        6: "new romantics",
+        7: "you're on your own kid",
+        8: "exile",
+        9: "mr. perfectly fine",
+        10: "all too well", 11: "people you know",                
+        12: "the man who cant be moved",                
+        13: "hall of fame",                
+        14: "dreamers", 
+        15: "blah blah blah",
+        16: "castle on the hill",
+        17: "galway girl",
+        18: "the a team",
+        19: "photograph",
+        20: "thinking out loud",
+        21: "all of the stars"}
+
+        display.score = 0
+        #calls game_display for interfaace of guess the song game
+        display.game_display()
+
+    def game_display(display):
+        display.clear_screen()
+        display.canvas = tk.Canvas(display.root, width=800, height=600)
+        display.canvas.pack(fill="both", expand=True)
+        
+        display.bg_image = tk.PhotoImage(file=r"C:\Users\Wajahat Traders\Downloads\Untitled design (4).png")
+        display.canvas.create_image(0, 0, image=display.bg_image, anchor="nw")
+
+        # adds title
+        display.canvas.create_text(700, 50, text="melody mysteries".upper(), font=("Helvetica", 50, "bold"), fill="white")
+
+        # adds score label
+        display.score_label = tk.Label(display.root, text=f"Score: {display.score}", font=("Helvetica", 30), bg="#9932CC", fg="white")
+        display.score_label.place(x=10, y=100)
+
+        # adds question label
+        display.question_label = tk.Label(display.root, text="", font=("Helvetica", 30), bg="#9932CC", fg="white")
+        display.question_label.place(x=300, y=200)
+
+        # adds answer entry
+        display.answer_entry = tk.Entry(display.root, width=50)
+        display.answer_entry.place(x=500, y=330)
+        display.answer_entry.bind("<Return>", display.check_answer)
+        display.answer_entry.focus_set()
+
+        # Add back to menu button
+        back_button = tk.Button(display.root, text="Back to Main Menu".upper(), command=display.main_menu_callback, font=("Helvetica", 20), bg="#9932CC", fg="white")
+        back_button.place(x=10, y=560)
+        #calls next question
+        display.next_question()
+
+    #to generate new questions again and again
+    def next_question(display):
+        display.current_question_number = random.randint(1, len(display.questions))
+        display.question_label.config(text=display.questions[display.current_question_number])
+        display.answer_entry.delete(0, tk.END)
+
+    #correct and incorrect answers display
+    def check_answer(display, event=None):
+        user_answer = display.answer_entry.get().strip().lower()
+        correct_answer = display.answers[display.current_question_number]
+        if user_answer == correct_answer:
+            display.score += 1
+            messagebox.showinfo("Correct!", f"That's right! The answer is '{correct_answer}'.")
+        else:
+            messagebox.showerror("Incorrect!", f"Wrong answer. The correct answer is '{correct_answer}'.")
+
+        #score display
+        display.score_label.config(text=f"Score: {display.score}")
+        display.next_question()
+
+    #clear screen
+    def clear_screen(display):
+        for widget in display.root.winfo_children():
+            widget.destroy()
+
+#guess the color game
+class PalettePuzzle:
+    #main interface of game
+    def __init__(display, root, main_menu_callback):
+        display.root = root
+        display.main_menu_callback = main_menu_callback
+        display.colors = ["Red", "Black", "Yellow", "Green", "Blue", "Purple", "Grey", "White", "Orange", "Brown", "Pink"]
+        display.scores = 0
+        display.time = 60
+        display.game_display()
+
+    #interface of color game
+    def game_display(display):
+        display.clear_screen()
+
+        
+        display.canvas = tk.Canvas(display.root, width = 2000, height= 700)
+        display.canvas.pack(fill="both", expand=True)
+
+        #adds bg image
+        display.bg_image = tk.PhotoImage(file=r"C:\Users\Wajahat Traders\Downloads\Untitled design (4).png")
+        display.canvas.create_image(0, 0, image=display.bg_image, anchor="nw")
+
+        #adds main text
+        display.canvas.create_text(700, 100, text= f"Palette puzzle".upper(), font=("Helvetica", 40), fill="white")
+        display.canvas.create_text(700, 200, text= f"Type the Color not the Text! \n Press Enter to Start".upper(), font=("Helvetica", 20), fill="white")
+
+        #time label
+        display.time_label = tk.Label(display.root, text=f"Remaining Time: {display.time}", font=("Helvetica", 30), fg="White", bg="#9932CC")
+        display.time_label.place(x = 900, y = 600)
+
+        #score label
+        display.scores_label = tk.Label(display.root, text=f"Score: {display.scores}", font=("Helvetica", 30), fg="White", bg="#9932CC")    #Dark Orchid bg
+        display.scores_label.place(x = 10, y = 200)
+
+        display.color_label = tk.Label(display.root, width= 5, font=("Helvetica", 50), text = "")
+        display.color_label.place(x=550, y=250)
+        #user input
+        display.user_entry = tk.Entry(display.root)
+        display.user_entry.place(x=600, y=400)
+        display.user_entry.focus_set()
+        display.user_entry.bind("<Return>", display.start_game)
+
+        #main menu button
+        back_button = tk.Button(display.root, text="Back to Main Menu".upper(), command=display.main_menu_callback, font=("Helvetica", 20), fg="White", bg="#9932CC")
+        back_button.place(x=10, y=560)
+
+       
+    #game start
+    def start_game(display, event):    
+        if display.time == 60:
+            display.counter()
+        display.color_logic()
+
+    #counter
+    def counter(display):
+        if display.time == 0:
+            messagebox.showinfo("Time Ended!", f"Your score is {display.scores}")
+            display.main_menu_callback()
+        else:
+            display.time -= 1
+            display.time_label.config(text=f"Remaining Time: {display.time}")
+            display.time_label.after(1000, display.counter)
+
+    #main color game logic
+    def color_logic(display):
+        user_input = display.user_entry.get().strip()
+        
+        if display.time > 0 : #and user_input != "":
+            if user_input.lower() == display.colors[1].lower():
+                display.scores += 1
+            
+            display.user_entry.delete(0, tk.END)
+            random.shuffle(display.colors)
+
+            display.scores_label.config(text=f"Score: {display.scores}")
+            display.color_label.config(fg=display.colors[1], text=display.colors[0])
+
+    #clear screen
+    def clear_screen(display):
+        for widget in display.root.winfo_children():
+            widget.destroy()
+
+#simple quiz game
+class PopQuiz:
+    def __init__(display, root, main_menu_callback):
+        display.root = root
+        display.main_menu_callback = main_menu_callback
+        #questions
+        display.questions = {1: "Which country has the highest life expectancy?\n\ta. Honk Kong\n\tb. Macao\n\tc. Japan\n\td. Pakistan", 2: "What is the fear of fun called?\n\ta. Phophophophobia\n\tb. Cherophobia\n\tc. Psychology\n\td. Emetophobia",
+        3: "Which animal sleeps the most?\n\t\ta. Koala\n\t\tb. Bat\n\t\tc. Syed Sualeh Abbas Rizvi\n\t\td. Python",
+        4: "What did the ancient Romans use as mouthwash?\n\t\ta. Toothpaste\n\t\tb. Donkey Dung\n\t\tc. Sewage Water\n\t\td. Urine",
+        5: "What/Who does a turophile love?\n\t\ta. Mothers\n\t\tb. Turtles\n\t\tc. Cheese\n\t\td. Countries",
+        6: "What disease causes the brain to shrink?\n\t\ta. Rabies\n\t\tb. Bell's Palsy\n\t\tc. BTS Army\n\t\td. Alzheimer's",
+        7: "How many bones do sharks have?\n\t\ta. 69\n\t\tb. 420\n\t\tc. 367\n\t\td. They don't have any bones",
+        8: "Where is \"Batman\" city located?\n\t\ta. Turkey\n\t\tb. Cyprus\n\t\tc. North Korea\n\t\td. South Korea",
+        9: "Where is Niger located?\n\t\ta. Nigeria\n\t\tb. Larkana\n\t\tc. Africa\n\t\td. Uganda",
+        10: "Which animal can use its tongue to clean its ears?\n\t\ta. Giraffe\n\t\tb. Jellyfish\n\t\tc. Guinea Pig\n\t\td. Cockroach",
+        11: "Where is Shitterton located?\n\t\ta. England\n\t\tb. Wales\n\t\tc. Scotland\n\t\td. India",
+        12: "What is a group of flamingos called??\n\t\ta. Pink Party\n\t\tb. Flamboyance\n\t\tc. Dong\n\t\td. Daddies",
+        13: "Which of the following is classified as a berry?\n\t\ta. Apple\n\t\tb. Giraffe Poo\n\t\tc. Strawberry\n\t\td. Banana",
+        14: "Which planet has days that are longer than its years?\n\t\ta. Neptune\n\t\tb. Mercury\n\t\tc. Venus\n\t\td. Planets don't exist (The Earth is Flat)",
+        15: "Humans share how much of their DNA with bananas?\n\t\ta. 0.5%\n\t\tb. 60%\n\t\tc. 98%\n\t\td. Bananas don't have DNA",
+        16: "What is the inventor of the Pringles can burried in?\n\t\ta. A Pringles Can\n\t\tb. A Coffin\n\t\tc. His body was never found\n\t\td. Fatima's backyard",
+        17: "Some turtles are able to breath through where?\n\t\ta. Their Butts\n\t\tb. Their Legs\n\t\tc. Their Hands\n\t\td. Their Ears",
+        18: "What is a single strand of spaghetti called?\n\t\ta. A spaghetto\n\t\tb. A noodle\n\t\tc. A dude\n\t\td. A king",
+         19: "Banging your head against a wall burns how many calories?\n\t\ta. 60\n\t\tb. 150\n\t\tc. 200\n\t\td. 2007",
+        20: "Where is Middelfart located?\n\t\ta. Middleton\n\t\tb. Denmark\n\t\tc. South Africa\n\t\td. Kenya",
+        21: "Who was the the mayor of Talkeetna, Alaska for 20 years?\n\t\ta. Rauf Abdullah\n\t\tb. A cat\n\t\tc. General Asim Muneer\n\t\td. Dr. Aziz bin Aziz bin Aziz",
+        22: "What is the average colour of the all the galaxies called?\n\t\ta. Blacker than Black\n\t\tb. Universal Pink\n\t\tc. Cosmic Latte\n\t\td. South Korean White",
+        23: "Wearing a tie can reduce blood flow to the brain by how much?\n\t\ta. 7.5%\n\t\tb. 2%\n\t\tc. 10%\n\t\td. 12%",
+        24: "Which animal has eyes bigger than its brain?\n\t\ta. Lion\n\t\tb. Gorilla\n\t\tc. Kangaroo\n\t\td. Flamingo",
+        25: "Deaf people are known to do what during their sleep?\n\t\ta. Pee themselves\n\t\tb. Use sign language\n\t\tc. Cry like babies\n\t\td. All of the above"}
+
+        #answers
+        display.answers = {1: "a",                 2: "b",                 3: "a",                 4: "d",                 5: "c",
+        6: "d",                 7: "d",                 8: "a",                 9: "c",                 10: "a",
+        11: "a",                12: "b",                13: "d",                14: "c",                15: "b",  
+        16: "a",                17: "a",                18: "a",                19: "b",                20: "b",
+        21: "b",                22: "c",                23: "a",                24: "d",              25:"b",}
+        display.mode = None
+        display.current_question = None
+        display.question_number = 0
+
+        display.main_menu()
+
+    #quiz game interface
+    def main_menu(display):
+        display.clear_screen()
+        display.canvas = tk.Canvas(display.root, width = 2000, height= 700)
+        display.canvas.pack(fill="both", expand=True)
+        #adds bg image
+        display.bg_image = tk.PhotoImage(file=r"C:\Users\Wajahat Traders\Downloads\Untitled design (4).png")
+        display.canvas.create_image(0, 0, image=display.bg_image, anchor="nw")
+        #game label
+        display.canvas.create_text(690, 50, text="Pop quiz".upper(), font=("Helvetica", 50, "bold"), fill="white")
+        #mode 1 label
+        display.mode_01 =tk.Button(display.root, text="Mode 1: Random Question".upper(), command=display.random_mode, font=("Helvetica", 20), fg="White", bg="#9932CC")
+        display.mode_01.place(x = 500, y = 200)
+       #mode 2 label
+        display.mode_02 =tk.Button(display.root, text="Mode 2: All Questions       ".upper(), command=display.start_all_questions_mode, font=("Helvetica", 20), fg="White", bg="#9932CC")
+        display.mode_02.place(x = 500, y = 300)
+        
+        #main menu button
+        back_button = tk.Button(display.root, text="Back to Main Menu".upper(), command=display.main_menu_callback, font=("Helvetica", 20), fg="White", bg="#9932CC")
+        back_button.place(x=10, y=560)
+
+    #if user== mode 1 it calls random question
+    def random_mode(display):
+        display.mode = 1
+        display.ask_random_question()
+
+    #if user== mode 2 it calls all questions
+    def start_all_questions_mode(display):
+        display.mode = 2
+        display.question_number = 0
+        display.ask_next_question()
+
+    #random question generator
+    def ask_random_question(display):
+        display.current_question = random.randint(1, len(display.questions))
+        display.display_question(display.current_question)
+
+    #next question logic
+    def ask_next_question(display):
+        if display.question_number < len(display.questions):
+            display.question_number += 1
+            display.current_question = display.question_number
+            display.display_question(display.current_question)
+        else:
+            messagebox.showinfo("Quiz Completed", "That's all the questions! Well done.")
+            display.main_menu()
+
+    #display interface of all questions
+    def display_question(display, question_number):
+        display.clear_screen()
+        display.canvas = tk.Canvas(display.root, width = 2000, height= 700)
+        display.canvas.pack(fill="both", expand=True)
+
+        #adds bg image
+        display.bg_image = tk.PhotoImage(file=r"C:\Users\Wajahat Traders\Downloads\Untitled design (4).png")
+        display.canvas.create_image(0, 0, image=display.bg_image, anchor="nw")
+
+        question_text = display.questions[question_number]
+
+        #adds questions label
+        display.question = tk.Label(display.root, text=f"Question {question_number}", font=("Helvetica", 20), fg= "White", bg="#9932CC")
+        display.question.place(x=20, y= 20)
+
+        #question label
+        display.q = tk.Label(display.root, text=question_text, height=5, font=("Helvetica", 20), fg= "White", bg="#9932CC", justify="left")
+        display.q.place(x=350, y=150)
+
+        #options buttons
+        options = ["a", "b", "c", "d"]
+        x = 400
+        for option in options:
+            display.buttons = tk.Button(display.root, text=option.upper(), command= lambda opt=option: display.check_answer(opt),font=("Helvetica", 20), fg= "White", bg="#9932CC")
+            display.buttons.place(x=x, y=400)
+            x += 150
+            
+        #end quiz button
+        if display.mode == 1:
+            display.button1 = tk.Button(display.root, text="End Quiz".upper(), command=display.main_menu, font=("Helvetica", 20), fg= "White", bg="#9932CC")
+            display.button1.place(x=20, y=600)
+
+    #answer correct and incorrect display
+    def check_answer(display, selected_option):
+        correct_answer = display.answers[display.current_question]
+        if selected_option == correct_answer:
+            messagebox.showinfo("Correct!", "That's the correct answer!")
+        else:
+            messagebox.showerror("Incorrect!", f"Wrong answer. The correct answer is {correct_answer.upper()}.")
+
+        if display.mode == 1:
+            display.ask_random_question()
+        elif display.mode == 2:
+            display.ask_next_question()
+    #clears screen
+    def clear_screen(display):
+        for widget in display.root.winfo_children():
+            widget.destroy()
+
+#rock paper scissors game
+class RPSRoyale:
+    def __init__(display, root, main_menu_callback):
+        display.root = root
+        display.main_menu_callback = main_menu_callback
+        display.choices = ["rock", "paper", "scissors"]
+        display.game_display()
+
+    #game interface
+    def game_display(display):
+        display.clear_screen()
+        display.canvas = tk.Canvas(display.root, width = 2000, height= 700)
+        display.canvas.pack(fill="both", expand=True)
+
+        #bg image
+        display.bg_image = tk.PhotoImage(file=r"C:\Users\Wajahat Traders\Downloads\Untitled design (4).png")
+        display.canvas.create_image(0, 0, image=display.bg_image, anchor="nw")
+
+        #rock paper scissors label
+        display.title = tk.Label(display.root, text="RPS Royale".upper(), font=("Helvetica", 40), fg="White", bg="#4B0082")
+        display.title.place(x=400, y=20)
+        display.choice = tk.Label(display.root, text="Choose your move:".upper(), font=("Helvetica", 40), fg="White", bg="#4B0082")
+        display.choice.place(x=450, y = 100)
+
+        #rock paper scissors button
+        display.rock = tk.Button(display.root, text="Rock".upper(), width=10, command=lambda: display.play_game("rock"), font=("Helvetica", 20), fg="White", bg="#4B0082")
+        display.rock.place(x=400, y=200)
+        display.paper = tk.Button(display.root, text="Paper".upper(), width=10, command=lambda: display.play_game("paper"), font=("Helvetica", 20), fg="White", bg="#4B0082")
+        display.paper.place(x=600, y=200)
+        display.scissor = tk.Button(display.root, text="Scissors".upper(), width=10, command=lambda: display.play_game("scissors"), font=("Helvetica", 20), fg="White", bg="#4B0082")
+        display.scissor.place(x=800, y=200)
+
+        #result label
+        display.result_label = tk.Label(display.root, text="", width = 30, font=("Helvetica", 30), fg="white", bg="#4B0082")
+        display.result_label.place(x=400, y=400)
+
+        #main menu button
+        back_button = tk.Button(display.root, text="Back to Main Menu".upper(), command=display.main_menu_callback,  font=("Helvetica", 20), fg="White", bg="#4B0082")
+        back_button.place(x=900, y=600)
+
+    #game logic
+    def play_game(display, player_choice):
+        computer_choice = random.choice(display.choices)
+        if player_choice == computer_choice:
+            result = "It's a draw!"     
+        # continuation character "\"
+        elif (player_choice == "rock" and computer_choice == "scissors") or \
+             (player_choice == "scissors" and computer_choice == "paper") or \
+             (player_choice == "paper" and computer_choice == "rock"):
+            result = "You win!"
+        else:
+            result = "You lose!"
+
+        display.result_label.config(text=f"You chose: {player_choice}\nComputer chose: {computer_choice}\n{result}")
+
+    #clears screen
+    def clear_screen(display):
+        for widget in display.root.winfo_children():
+            widget.destroy()
+
+#math game
+class MathBlitz:
+    def __init__(display, root, main_menu_callback=None):
+        display.root = root
+        display.main_menu_callback = main_menu_callback or display.root.quit
+        display.time = 60
+        display.score = 0
+        display.correct_answer = None
+        display.operations = ["+", "-", "*"]
+        display.timer_started = False
+        display.game_display()
+
+    #game interface
+    def game_display(display):
+        display.clear_screen()
+        display.canvas = tk.Canvas(display.root, width = 2000, height= 700)
+        display.canvas.pack(fill="both", expand=True)
+
+        #game bg
+        display.bg_image = tk.PhotoImage(file=r"C:\Users\Wajahat Traders\Downloads\Untitled design (4).png")
+        display.canvas.create_image(0, 0, image=display.bg_image, anchor="nw")
+
+        #main label
+        display.title = tk.Label(display.root, text="Math blitz".upper(), font=("Helvetica", 30), fg="White", bg="#4B0082")
+        display.title.place(x=500, y=30)
+        display.instruction_01 = tk.Label(display.root, text="Solve as many problems as you can!".upper(), font=("Helvetica", 25), fg="White", bg="#4B0082")
+        display.instruction_01.place(x=370, y=100)
+        display.instruction_02 = tk.Label(display.root, text="Press enter to start".upper(), font=("Helvetica", 25), fg="White", bg="#4B0082")
+        display.instruction_02.place(x=400, y=150)
+
+        #time label
+        display.time_label = tk.Label(display.root, text="Remaining Time: 60".upper(), font=("Helvetica", 20), fg="White", bg="#4B0082")
+        display.time_label.place(x=30, y=600)
+
+        #score label
+        display.score_label = tk.Label(display.root, text="Score: 0".upper(),font=("Helvetica", 20), fg="White", bg="#4B0082")
+        display.score_label.place(x=30, y=100)
+
+        #operation label
+        display.operation_label = tk.Label(display.root, text="", font=("Helvetica", 30), fg="White", bg="#4B0082")     # "#4B0082" = indigo color
+        display.operation_label.place(x= 600, y=200)
+
+        #user input
+        display.user_entry = tk.Entry(display.root)
+        display.user_entry.place(x=500, y=300)
+        display.user_entry.focus_set()
+
+        #main menu button
+        back_button = tk.Button(display.root, text="Back to Main Menu".upper(), command=display.main_menu_callback,  font=("Helvetica", 20), fg="White", bg="#4B0082")
+        back_button.place(x=1000, y=600)
+
+        display.root.bind("<Return>", display.start_game)
+    
+    #clear screen
+    def clear_screen(display):
+        for widget in display.root.winfo_children():
+            widget.destroy()
+
+    #game start timer start
+    def start_game(display, event):
+        if not display.timer_started:
+            display.timer_started = True
+            display.timer()
+        display.questions_display()
+
+    #timer function
+    def timer(display):
+        if display.time == 0:
+            messagebox.showinfo("Time's Up!", f"Your score is {display.score}")
+            display.main_menu_callback()
+        else:
+            display.time -= 1
+            display.time_label.config(text=f"Remaining Time: {display.time}")
+            display.time_label.after(1000, display.timer)
+
+    #problem random generation
+    def questions_display(display):
+        if display.time > 0:
+            try:
+                user_answer = int(display.user_entry.get())
+                if user_answer == round(display.correct_answer):
+                    display.score += 1
+                if user_answer == "":
+                    pass    
+            except ValueError:
+                pass
+
+            display.user_entry.delete(0, tk.END)
+            display.score_label.config(text=f"Score: {display.score}")
+
+            num_1 = random.randint(1, 10)
+            num_2 = random.randint(1, 10)
+            operation = random.choice(display.operations)
+            if operation == "/":
+                # no division by zero
+                num_2 = random.randint(1, 10)
+                display.correct_answer = num_1 // num_2  # integer division
+                display.operation_label.config(text=f"{num_1} // {num_2}")
+            else:
+                display.correct_answer = eval(f"{num_1} {operation} {num_2}")
+                display.operation_label.config(text=f"{num_1} {operation} {num_2}")
+
+#guess the number game
+class CosmicCode:
+    def __init__(display, root, main_menu_callback):
+        display.root = root
+        display.main_menu_callback = main_menu_callback
+        display.number_to_guess = random.randint(1, 100)
+        display.attempts = 0
+        display.game_display()
+
+    #game interface
+    def game_display(display):
+        display.clear_screen()
+        display.canvas = tk.Canvas(display.root, width = 2000, height= 700)
+        display.canvas.pack(fill="both", expand=True)
+
+        #adds bg image
+        display.bg_image = tk.PhotoImage(file=r"C:\Users\Wajahat Traders\Downloads\Untitled design (4).png")
+        display.canvas.create_image(0, 0, image=display.bg_image, anchor="nw")
+
+        #adds title label
+        display.title = tk.Label(display.root, text="cosmic code".upper(), font=("Helvetica", 30), fg="white", bg="#4B0082")
+        display.title.place(x=450, y=30)
+
+        #adds instruction label
+        display.info_label = tk.Label(display.root, text=f"I have chosen a number between 1 and 100. \n Try to guess it!".upper(), font=("Helvetica", 30), fg="white", bg="#4B0082")
+        display.info_label.place(x=280, y=100)
+
+        #user input
+        display.input_entry = tk.Entry(display.root)
+        display.input_entry.place(x=600, y=250)
+        display.input_entry.focus_set()
+        display.input_entry.bind("<Return>", display.check_guess)
+
+        display.feedback_label = tk.Label(display.root, text="", font=("Helvetica", 30), fg="white", bg="#4B0082")
+        display.feedback_label.place(x=400, y=400)
+
+        #main menu button
+        back_button = tk.Button(display.root, text="Back to Main Menu".upper(), command=display.main_menu_callback,  font=("Helvetica", 20), fg="White", bg="#4B0082")
+        back_button.place(x=1000, y=600)
+
+    #number game main logic
+    def check_guess(display, event=None):
+        try:
+            user_guess = int(display.input_entry.get())
+        except ValueError:
+            display.feedback_label.config(text="Please enter a valid number!".upper(), fg="red")
+            return
+
+        display.attempts += 1
+
+        if display.number_to_guess - 5 < user_guess < display.number_to_guess + 5 and user_guess != display.number_to_guess:
+            display.feedback_label.config(text=f"You're really close! Try again.".upper(), fg="orange")
+        elif user_guess < display.number_to_guess:
+            display.feedback_label.config(text=f"The number is higher than {user_guess}.".upper(), fg="blue")
+        elif user_guess > display.number_to_guess:
+            display.feedback_label.config(text=f"The number is lower than {user_guess}.".upper(), fg="blue")
+        else:
+            messagebox.showinfo("Congratulations!", f"You guessed the number {display.number_to_guess} correctly in {display.attempts} attempts!")
+            display.reset_game()
+
+        display.input_entry.delete(0, tk.END)
+
+    #start the game again
+    def reset_game(display):
+        display.number_to_guess = random.randint(1, 100)
+        display.attempts = 0
+        display.feedback_label.config(text="")
+        display.info_label.config(text="I have chosen a new number. Try to guess it!".upper())
+
+    #clears screen
+    def clear_screen(display):
+        for widget in display.root.winfo_children():
+            widget.destroy()
+
+
+#main root of game
+root = tk.Tk()
+#game size
+root.geometry("1300x700")
+#main class call
+MainMenu(root)
+root.mainloop()
